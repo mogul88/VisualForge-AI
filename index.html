@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VisualForge AI v13 — Prompt Automation Engine</title>
+  <meta name="description" content="Batch AI image generator with master style, prompt compiler, exact sizes, optional product overlay, and ZIP export." />
+  <link rel="preconnect" href="https://image.pollinations.ai" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="style-v13.css?v=13" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Prompt Automation Engine</p>
+        <h1>VisualForge AI <span>v13</span></h1>
+        <p class="hero-copy">Paste one master style + many image instructions. The tool compiles final prompts, generates batch images, applies exact sizing, and exports everything as a ZIP.</p>
+      </div>
+      <div class="hero-card-mini">
+        <strong>No Puter. No balance popup.</strong>
+        <span>Pollinations free mode + browser canvas export.</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel setup-panel">
+        <div class="panel-title">
+          <span class="step">1</span>
+          <div>
+            <h2>Setup</h2>
+            <p>Choose platform, size, model, and batch behavior.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="platformPreset">Platform preset</label>
+          <select id="platformPreset"></select>
+        </div>
+
+        <div class="size-row">
+          <div class="field">
+            <label for="widthInput">Width</label>
+            <input id="widthInput" type="number" min="256" max="4096" value="1600" />
+          </div>
+          <div class="field">
+            <label for="heightInput">Height</label>
+            <input id="heightInput" type="number" min="256" max="4096" value="900" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="modelSelect">Free model</label>
+          <select id="modelSelect">
+            <option value="flux" selected>Flux — better realism</option>
+            <option value="turbo">Turbo — faster</option>
+          </select>
+        </div>
+
+        <div class="size-row">
+          <div class="field">
+            <label for="formatSelect">Export format</label>
+            <select id="formatSelect">
+              <option value="image/png" selected>PNG</option>
+              <option value="image/jpeg">JPG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="seedMode">Seed mode</label>
+            <select id="seedMode">
+              <option value="random" selected>Random</option>
+              <option value="fixed">Fixed start seed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" id="seedWrap" hidden>
+          <label for="seedInput">Start seed</label>
+          <input id="seedInput" type="number" value="101" />
+        </div>
+
+        <div class="checks">
+          <label><input id="autoEnhance" type="checkbox" checked /> Auto-enhance with quality rules</label>
+          <label><input id="forceNoText" type="checkbox" checked /> Force no fake text / no labels</label>
+          <label><input id="strictSize" type="checkbox" checked /> Force exact size with canvas</label>
+          <label><input id="seoNames" type="checkbox" checked /> SEO filenames</label>
+        </div>
+
+        <div class="panel-title small-title">
+          <span class="step">+</span>
+          <div>
+            <h2>Optional product overlay</h2>
+            <p>For Etsy/Facebook only. Keep OFF for article/roof images.</p>
+          </div>
+        </div>
+
+        <label class="upload-zone" for="productInput">
+          <input id="productInput" type="file" accept="image/*" />
+          <span>Upload Canva/product image</span>
+          <small>Optional. Tool can place it on every final image after AI generation.</small>
+        </label>
+        <div id="productPreview" class="product-preview"></div>
+
+        <div class="checks compact">
+          <label><input id="useProduct" type="checkbox" /> Use uploaded product in final images</label>
+        </div>
+        <div class="field">
+          <label for="productPlacement">Product placement</label>
+          <select id="productPlacement">
+            <option value="right-card" selected>Right floating card</option>
+            <option value="left-card">Left floating card</option>
+            <option value="center">Center product hero</option>
+            <option value="bottom-stack">Bottom stack</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel prompt-panel">
+        <div class="panel-title">
+          <span class="step">2</span>
+          <div>
+            <h2>Master Style + Image List</h2>
+            <p>Write style once. Then paste 10, 20, or 50 image instructions.</p>
+          </div>
+        </div>
+
+        <div class="quick-buttons">
+          <button type="button" data-style="roof">RoofPitch Style</button>
+          <button type="button" data-style="etsy">Etsy Style</button>
+          <button type="button" data-style="facebook">Facebook Style</button>
+          <button type="button" data-style="clear">Clear</button>
+        </div>
+
+        <div class="field">
+          <label for="masterStyle">Master style — applies to every image</label>
+          <textarea id="masterStyle" spellcheck="false" placeholder="Example: Premium dark engineering style. Colors: navy, gold, white. Ultra realistic. Sharp details. Google Discover quality. No text, no watermark."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="imageInstructions">Image instructions — one per line OR Image 1 / Image 2 blocks</label>
+          <textarea id="imageInstructions" class="big-textarea" spellcheck="false" placeholder="Image 1
+Luxury American house at dusk with clear gable roof
+
+Image 2
+Professional roofer measuring roof pitch
+
+Image 3
+Blueprint style roof framing visual"></textarea>
+        </div>
+
+        <div class="action-row">
+          <button id="compileBtn" class="ghost-btn" type="button">Compile Prompts</button>
+          <button id="copyPromptsBtn" class="ghost-btn" type="button" disabled>Copy Compiled</button>
+          <button id="downloadPromptsBtn" class="ghost-btn" type="button" disabled>Download JSON</button>
+        </div>
+
+        <div id="errorPanel" class="error-panel" hidden>
+          <strong id="errorTitle">Action needed</strong>
+          <p id="errorMessage"></p>
+        </div>
+
+        <details class="compiled-box" open>
+          <summary><span>Compiled prompts</span><span id="compiledCount">0 prompts</span></summary>
+          <div id="compiledList" class="compiled-list empty">Compile prompts to preview them here.</div>
+        </details>
+      </section>
+    </main>
+
+    <section class="panel run-panel">
+      <div class="run-actions">
+        <button id="generateBtn" class="primary-btn" type="button">Generate All Images</button>
+        <button id="retryFailedBtn" class="retry-btn" type="button" disabled>Retry Failed Only</button>
+        <button id="downloadZipBtn" class="secondary-btn" type="button" disabled>Download ZIP</button>
+      </div>
+      <div class="progress-top"><strong id="progressTitle">Ready</strong><span id="progressMeta">0 / 0</span></div>
+      <div class="progress-track"><div id="progressBar"></div></div>
+      <pre id="logBox" class="log-box">VisualForge v13 loaded. Paste master style + image list, then compile.</pre>
+    </section>
+
+    <section class="panel results-panel">
+      <div class="panel-title">
+        <span class="step">3</span>
+        <div>
+          <h2>Results</h2>
+          <p>Each image is exported at exact selected size. Download one image or the full ZIP.</p>
+        </div>
+        <span id="resultCount" class="count-badge">0 images</span>
+      </div>
+      <div id="resultsGrid" class="results-grid empty-results">
+        <div class="empty-card">No images yet.</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app-v13.js?v=13"></script>
+</body>
+</html>
