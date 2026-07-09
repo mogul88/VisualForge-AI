@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VisualForge AI v11</title>
+  <meta name="description" content="AI background generator, product image upload, custom readable overlays, color controls, platform presets, and one-click export for Etsy, Facebook, Pinterest, websites, and roofing visuals." />
+  <link rel="stylesheet" href="style-v11.css?v=11" />
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AI Background + Product Upload + Real Overlay</p>
+        <h1>VisualForge AI <span>v11</span></h1>
+        <p>Free Pollinations background generation. Upload your Canva/product images. Add real readable text, custom cards, badges, colors, CTA, product placement, and export final images without Canva.</p>
+      </div>
+      <div class="hero-tags"><span>No Puter</span><span>No AI Text</span><span>Canvas Export</span></div>
+    </header>
+
+    <main class="grid">
+      <aside class="panel controls">
+        <div class="panel-title"><b>1</b><div><h2>Canvas + Background</h2><p>Choose size and create/upload a clean background.</p></div></div>
+
+        <label>Platform / size preset</label>
+        <select id="platformPreset"></select>
+
+        <div class="two">
+          <div><label>Width</label><input id="widthInput" type="number" min="320" max="4096" /></div>
+          <div><label>Height</label><input id="heightInput" type="number" min="320" max="4096" /></div>
+        </div>
+
+        <div class="two">
+          <div><label>How many images?</label><input id="imageCount" type="number" min="1" max="12" placeholder="e.g. 3" /></div>
+          <div><label>Background style</label><select id="stylePreset"></select></div>
+        </div>
+
+        <label>AI background prompt(s)</label>
+        <textarea id="bgPrompts" placeholder="One prompt per image. Example: luxury modern American house at dusk, roof clearly visible, cinematic realistic photo, no text"></textarea>
+        <div class="mini-actions">
+          <button id="roofPromptBtn" type="button">Roof prompt</button>
+          <button id="etsyPromptBtn" type="button">Etsy prompt</button>
+          <button id="fbPromptBtn" type="button">Facebook prompt</button>
+        </div>
+
+        <div class="checkgrid">
+          <label><input id="enhancePrompt" type="checkbox" checked /> Enhance prompt</label>
+          <label><input id="emptySpace" type="checkbox" checked /> Leave overlay space</label>
+          <label><input id="noLogo" type="checkbox" checked /> No provider logo</label>
+        </div>
+
+        <div class="button-row">
+          <button id="generateBtn" class="primary" type="button">Generate Backgrounds</button>
+          <label class="upload-btn" for="bgUpload">Upload Background<input id="bgUpload" type="file" accept="image/*" multiple /></label>
+        </div>
+        <div id="status" class="status"><strong>Ready</strong><span>Start by generating or uploading a background.</span></div>
+      </aside>
+
+      <section class="center">
+        <div class="panel preview-panel">
+          <div class="preview-head">
+            <div class="panel-title small"><b>2</b><div><h2>Live Final Preview</h2><p>Everything here is real canvas text and export-ready.</p></div></div>
+            <div class="download-row">
+              <select id="exportFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select>
+              <button id="refreshBtn" type="button">Refresh</button>
+              <button id="downloadCurrentBtn" class="primary" type="button" disabled>Download Current</button>
+            </div>
+          </div>
+          <div class="canvas-frame"><canvas id="canvas"></canvas></div>
+          <div id="bgThumbs" class="thumbs"><div class="empty">Generated/uploaded backgrounds appear here.</div></div>
+        </div>
+
+        <div class="panel export-panel">
+          <div><h2>Batch Export</h2><p>Apply the same uploaded product + overlay to all backgrounds and export as ZIP.</p></div>
+          <button id="zipBtn" class="primary" type="button" disabled>Download All ZIP</button>
+        </div>
+      </section>
+
+      <aside class="panel designer">
+        <div class="panel-title"><b>3</b><div><h2>Overlay Builder</h2><p>Choose template, upload product, edit all text and colors.</p></div></div>
+
+        <section class="box open">
+          <h3>Template</h3>
+          <label>Overlay preset</label><select id="overlayPreset"></select>
+          <label>Product placement</label><select id="productMode"></select>
+          <div class="checkgrid">
+            <label><input id="showProduct" type="checkbox" checked /> Product</label>
+            <label><input id="showTitle" type="checkbox" checked /> Title</label>
+            <label><input id="showBadges" type="checkbox" checked /> Badges</label>
+            <label><input id="showCards" type="checkbox" checked /> Cards</label>
+            <label><input id="showCta" type="checkbox" checked /> CTA</label>
+            <label><input id="showFooter" type="checkbox" checked /> Footer</label>
+            <label><input id="showGrid" type="checkbox" checked /> Blueprint grid</label>
+            <label><input id="showVignette" type="checkbox" checked /> Vignette</label>
+          </div>
+        </section>
+
+        <section class="box open">
+          <h3>Upload Canva / Product Image</h3>
+          <label class="upload-zone" for="productUpload"><input id="productUpload" type="file" accept="image/*" multiple /><span>＋ Upload product image(s)</span><small>Printable, spreadsheet, invitation, logo, roof diagram, PNG/JPG/WebP</small></label>
+          <div id="productThumbs" class="product-thumbs"></div>
+        </section>
+
+        <section class="box open">
+          <h3>Text</h3>
+          <label>Main title</label><input id="titleText" type="text" />
+          <label>Subtitle</label><input id="subtitleText" type="text" />
+          <div class="two"><div><label>Badge 1</label><input id="badge1" type="text" /></div><div><label>Badge 2</label><input id="badge2" type="text" /></div></div>
+          <div class="two"><div><label>CTA</label><input id="ctaText" type="text" /></div><div><label>Footer / brand</label><input id="footerText" type="text" /></div></div>
+          <label>Cards / bullets <small>One per line: Label | Value</small></label>
+          <textarea id="cardsText"></textarea>
+        </section>
+
+        <section class="box open">
+          <h3>Colors</h3>
+          <div class="colorgrid">
+            <label>Accent<input id="accentColor" type="color" /></label>
+            <label>Button<input id="buttonColor" type="color" /></label>
+            <label>Text<input id="textColor" type="color" /></label>
+            <label>Card<input id="cardColor" type="color" /></label>
+            <label>Badge BG<input id="badgeBgColor" type="color" /></label>
+            <label>Badge Text<input id="badgeTextColor" type="color" /></label>
+          </div>
+          <button id="roofColorsBtn" type="button" class="ghost-full">Roof colors</button>
+          <button id="etsyColorsBtn" type="button" class="ghost-full">Etsy colors</button>
+        </section>
+
+        <section class="box open">
+          <h3>Fine Tune</h3>
+          <label>Overlay opacity <input id="overlayOpacity" type="range" min="30" max="100" value="92" /></label>
+          <label>Title size <input id="titleSize" type="range" min="28" max="120" value="70" /></label>
+          <label>Product size <input id="productSize" type="range" min="15" max="105" value="46" /></label>
+          <label>Product X <input id="productX" type="range" min="0" max="100" value="68" /></label>
+          <label>Product Y <input id="productY" type="range" min="0" max="100" value="55" /></label>
+          <label>Product rotation <input id="productRot" type="range" min="-20" max="20" value="0" /></label>
+          <label>Background dim <input id="bgDim" type="range" min="0" max="75" value="34" /></label>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app-v11.js?v=11"></script>
+</body>
+</html>
