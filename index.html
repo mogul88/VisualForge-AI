@@ -6,6 +6,8 @@
   <title>Bulk Image Maker AI</title>
   <meta name="description" content="Generate bulk AI images from prompts, optionally use reference images, resize exactly for Etsy, blogs, Facebook, LinkedIn, Pinterest, and download all as ZIP." />
   <link rel="preconnect" href="https://js.puter.com" />
+  <link rel="preconnect" href="https://image.pollinations.ai" />
+  <link rel="preconnect" href="https://gen.pollinations.ai" />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -62,15 +64,26 @@
             </div>
           </div>
 
+          <div class="field-group provider-field">
+            <label for="providerSelect">Image provider</label>
+            <select id="providerSelect">
+              <option value="pollinations_legacy" selected>Pollinations Free URL — no login first</option>
+              <option value="pollinations_key">Pollinations API Key — publishable key</option>
+              <option value="puter">Puter GPT Image — premium / balance</option>
+            </select>
+            <small id="providerHelp">Default free mode tries Pollinations URL generation. Use Puter only when you have Puter balance and need reference-image support.</small>
+          </div>
+
+          <div id="pollinationsKeyWrap" class="field-group hidden">
+            <label for="pollinationsKey">Pollinations publishable key</label>
+            <input id="pollinationsKey" type="password" placeholder="pk_... optional public/browser key" autocomplete="off" />
+            <small>Use a scoped publishable key only. Never paste a secret sk_ key in frontend code.</small>
+          </div>
+
           <div class="two-col">
             <div class="field-group">
               <label for="modelSelect">Model</label>
-              <select id="modelSelect">
-                <option value="gpt-image-2" selected>GPT Image 2 — Best</option>
-                <option value="gpt-image-1.5">GPT Image 1.5</option>
-                <option value="gpt-image-1">GPT Image 1</option>
-                <option value="gpt-image-1-mini">GPT Image 1 Mini</option>
-              </select>
+              <select id="modelSelect"></select>
             </div>
             <div class="field-group">
               <label for="qualitySelect">Quality</label>
@@ -78,7 +91,7 @@
                 <option value="medium" selected>Medium — balanced</option>
                 <option value="high">High — premium</option>
                 <option value="low">Low — faster</option>
-                <option value="auto">Auto — GPT Image 2</option>
+                <option value="auto">Auto</option>
               </select>
             </div>
           </div>
@@ -125,6 +138,10 @@
               <span>Force exact selected size after generation</span>
             </label>
             <label class="check-row">
+              <input id="fallbackPollinations" type="checkbox" checked />
+              <span>Auto-fallback to Pollinations if Puter balance/model fails</span>
+            </label>
+            <label class="check-row">
               <input id="seoFilenames" type="checkbox" checked />
               <span>SEO-friendly filenames from prompts</span>
             </label>
@@ -155,7 +172,21 @@
 
       <section class="action-panel">
         <button id="generateBtn" class="primary-action" type="button">Generate Images</button>
+        <button id="retryFailedBtn" class="retry-action" type="button" disabled>Retry Failed Only</button>
         <button id="downloadZipBtn" class="secondary-action" type="button" disabled>Download ZIP</button>
+      </section>
+
+      <section id="errorPanel" class="error-panel" hidden>
+        <div class="error-panel-head">
+          <div class="error-title-wrap">
+            <span class="error-icon">⚠</span>
+            <div>
+              <strong id="errorTitle">Action needed</strong>
+              <p id="errorSubtitle">Please fix the issue below and try again.</p>
+            </div>
+          </div>
+        </div>
+        <div id="errorMessage" class="error-message"></div>
       </section>
 
       <section class="progress-panel panel">
