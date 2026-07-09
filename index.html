@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bulk Image Maker AI — Auto Overlay Builder</title>
+  <meta name="description" content="Generate clean AI base images and automatically add premium real text/UI overlays for website-ready images." />
+  <link rel="preconnect" href="https://image.pollinations.ai" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="style-v9.css?v=9" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero-card">
+      <div class="hero-left">
+        <p class="eyebrow">Free Base Image → Auto Overlay → Final Export</p>
+        <h1>Bulk Image Maker AI</h1>
+        <p class="hero-copy">Generate clean base images, then this tool adds real premium text, calculator cards, and engineering UI overlays automatically. No Canva step needed.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="connect-btn connected" type="button" disabled><span class="connect-dot"></span><span>Free Mode Active</span></button>
+        <div class="connect-status connected">Pollinations base + real canvas overlay</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="workspace-grid">
+        <aside class="panel setup-panel">
+          <div class="panel-head"><div><span class="step-badge">1</span><h2>Setup</h2></div><span id="sizeBadge" class="mini-badge">2000 × 2000</span></div>
+
+          <div class="field-group">
+            <label for="imageCount">How many images?</label>
+            <input id="imageCount" type="number" min="1" max="50" inputmode="numeric" placeholder="e.g. 3, 5, 10" autocomplete="off" />
+            <small>Enter number. Prompt boxes will appear automatically.</small>
+          </div>
+
+          <div class="field-group">
+            <label for="sizePreset">Size preset</label>
+            <select id="sizePreset"></select>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group"><label for="widthInput">Width</label><input id="widthInput" type="number" min="64" max="4096" placeholder="1200" /></div>
+            <div class="field-group"><label for="heightInput">Height</label><input id="heightInput" type="number" min="64" max="4096" placeholder="630" /></div>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="modelSelect">Model</label>
+              <select id="modelSelect"><option value="flux" selected>Flux — best free realistic</option><option value="turbo">Turbo — faster</option></select>
+            </div>
+            <div class="field-group">
+              <label for="formatSelect">Download format</label>
+              <select id="formatSelect"><option value="image/png" selected>PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select>
+            </div>
+          </div>
+
+          <div class="reference-box">
+            <div class="reference-head"><div><h3>Optional reference images</h3><p>Free Pollinations URL mode is prompt-only. Uploads are only shown as preview/reminder; they are not sent to the provider.</p></div><span id="refCount" class="mini-badge">0 refs</span></div>
+            <label class="upload-zone" for="referenceInput"><input id="referenceInput" type="file" accept="image/*" multiple /><span class="upload-icon">＋</span><span>Upload reference image(s)</span><small>For visual reminder only in free mode.</small></label>
+            <div id="referencePreview" class="reference-preview"></div>
+          </div>
+
+          <div class="check-list">
+            <label class="check-row"><input id="autoEnhance" type="checkbox" checked /><span>Auto-enhance prompts for clean realistic base image only</span></label>
+            <label class="check-row"><input id="strictResize" type="checkbox" checked /><span>Force exact selected size after generation</span></label>
+            <label class="check-row"><input id="seoFilenames" type="checkbox" checked /><span>SEO-friendly filenames from prompts</span></label>
+          </div>
+
+          <div class="overlay-builder">
+            <div class="reference-head">
+              <div>
+                <h3>Auto design overlay</h3>
+                <p>The AI creates only the house/background. This tool adds real readable headings, metric cards, calculator UI, and blueprint lines automatically.</p>
+              </div>
+              <span class="mini-badge success">Canvas text</span>
+            </div>
+
+            <label class="check-row overlay-toggle">
+              <input id="overlayEnabled" type="checkbox" checked />
+              <span>Add premium engineering overlay automatically</span>
+            </label>
+
+            <div class="field-group">
+              <label for="overlayPreset">Overlay preset</label>
+              <select id="overlayPreset">
+                <option value="roof_pitch" selected>Roof Pitch Calculator Hero</option>
+                <option value="roof_cost">Roof Cost Calculator</option>
+                <option value="roof_framing">Roof Framing Guide</option>
+                <option value="clean_cards">Clean Website Cards</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="overlayHeading">Heading</label>
+              <input id="overlayHeading" type="text" placeholder="Build Smarter. Estimate Faster." value="Build Smarter. Estimate Faster." />
+            </div>
+
+            <div class="field-group">
+              <label for="overlaySubheading">Small badge / domain</label>
+              <input id="overlaySubheading" type="text" placeholder="RoofPitchCalculators.com" value="RoofPitchCalculators.com" />
+            </div>
+
+            <div class="field-group">
+              <label for="overlayMetrics">Metric cards — one per line, use Label | Value</label>
+              <textarea id="overlayMetrics" class="overlay-metrics" spellcheck="false">Roof Pitch | 6 / 12
+Roof Angle | 26.57°
+Roof Area | 1,562 sq ft
+Roofing Squares | 15.62
+Cost Estimate | $18,560
+Rafter Length | 16' - 7 3/4"</textarea>
+              <small>These are drawn by the tool, not by AI, so text stays readable.</small>
+            </div>
+          </div>
+        </aside>
+
+        <section class="panel prompts-panel">
+          <div class="panel-head"><div><span class="step-badge">2</span><h2>Prompts</h2></div><span id="promptCountBadge" class="mini-badge">0 prompts</span></div>
+          <p class="section-help">Write one strong prompt per image. Write the scene/background prompt only. The tool will add real readable text/UI overlays automatically.</p>
+          <div id="promptList" class="prompt-list empty-state"><div class="empty-card"><strong>No prompt boxes yet.</strong><span>Enter image count in Setup.</span></div></div>
+        </section>
+      </section>
+
+      <section class="action-panel">
+        <button id="generateBtn" class="primary-action" type="button">Generate Images</button>
+        <button id="retryFailedBtn" class="retry-action" type="button" disabled>Retry Failed Only</button>
+        <button id="downloadZipBtn" class="secondary-action" type="button" disabled>Download ZIP</button>
+      </section>
+
+      <section id="errorPanel" class="error-panel" hidden>
+        <div class="error-title-wrap"><span class="error-icon">⚠</span><div><strong id="errorTitle">Action needed</strong><p id="errorSubtitle">Fix the issue below and try again.</p></div></div>
+        <div id="errorMessage" class="error-message"></div>
+      </section>
+
+      <section class="progress-panel panel">
+        <div class="progress-top"><strong id="progressTitle">Ready</strong><span id="progressMeta">0 / 0</span></div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        <pre id="logBox" class="log-box">Waiting for setup...</pre>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="panel-head"><div><span class="step-badge">3</span><h2>Results</h2></div><span id="resultCount" class="mini-badge success">0 images</span></div>
+        <p class="section-help">Generated final images appear here with real overlay text applied by the tool.</p>
+        <div id="resultsGrid" class="results-grid empty-results"><div class="empty-card"><strong>No images yet.</strong><span>Add prompts and click Generate Images.</span></div></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app-v9.js?v=9"></script>
+</body>
+</html>
