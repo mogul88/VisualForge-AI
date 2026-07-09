@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bulk Image Maker AI</title>
   <meta name="description" content="Generate bulk AI images from prompts, optionally use reference images, resize exactly for Etsy, blogs, Facebook, LinkedIn, Pinterest, and download all as ZIP." />
-  <link rel="preconnect" href="https://js.puter.com" />
   <link rel="preconnect" href="https://image.pollinations.ai" />
   <link rel="preconnect" href="https://gen.pollinations.ai" />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
@@ -23,11 +22,11 @@
       </div>
 
       <div class="hero-actions">
-        <button id="connectPuterBtn" class="connect-btn" type="button">
+        <button id="connectPuterBtn" class="connect-btn connected" type="button" disabled>
           <span class="connect-dot"></span>
-          <span id="connectText">Connect Puter</span>
+          <span id="connectText">Free Mode Active</span>
         </button>
-        <div id="connectStatus" class="connect-status">Not connected</div>
+        <div id="connectStatus" class="connect-status connected">Pollinations free mode — no Puter balance needed</div>
       </div>
     </header>
 
@@ -66,12 +65,10 @@
 
           <div class="field-group provider-field">
             <label for="providerSelect">Image provider</label>
-            <select id="providerSelect">
-              <option value="pollinations_legacy" selected>Pollinations Free URL — no login first</option>
-              <option value="pollinations_key">Pollinations API Key — publishable key</option>
-              <option value="puter">Puter GPT Image — premium / balance</option>
+            <select id="providerSelect" disabled>
+              <option value="pollinations_legacy" selected>Pollinations Free URL — no login, no Puter balance</option>
             </select>
-            <small id="providerHelp">Default free mode tries Pollinations URL generation. Use Puter only when you have Puter balance and need reference-image support.</small>
+            <small id="providerHelp">This free build uses Pollinations only. It will never open the Puter low-balance popup.</small>
           </div>
 
           <div id="pollinationsKeyWrap" class="field-group hidden">
@@ -109,7 +106,7 @@
             <div class="reference-head">
               <div>
                 <h3>Optional reference images</h3>
-                <p>Upload a Canva template, product page, design, or mockup that should appear in the generated images.</p>
+                <p>Free Pollinations mode is prompt-only. Reference uploads are saved for preview, but they are not sent to the image provider.</p>
               </div>
               <span id="refCount" class="mini-badge">0 refs</span>
             </div>
@@ -127,7 +124,7 @@
           <div class="check-list">
             <label class="check-row">
               <input id="useReferences" type="checkbox" checked />
-              <span>Use uploaded references in every image</span>
+              <span>Reference image support requires paid/premium provider — ignored in free mode</span>
             </label>
             <label class="check-row">
               <input id="autoEnhance" type="checkbox" checked />
@@ -217,7 +214,6 @@
     </main>
   </div>
 
-  <script src="https://js.puter.com/v2/"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="app.js"></script>
 </body>
