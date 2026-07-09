@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bulk Image Maker AI</title>
+  <meta name="description" content="Generate bulk AI images from prompts, optionally use reference images, resize exactly for Etsy, blogs, Facebook, LinkedIn, Pinterest, and download all as ZIP." />
+  <link rel="preconnect" href="https://js.puter.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero-card">
+      <div class="hero-left">
+        <p class="eyebrow">Prompt → Reference → Image → Resize → Download</p>
+        <h1>Bulk Image Maker AI</h1>
+        <p class="hero-copy">
+          Generate multiple listing, blog, and social images from separate prompts. Upload a Canva/template image as an optional reference, force exact dimensions, and export everything in one ZIP.
+        </p>
+      </div>
+
+      <div class="hero-actions">
+        <button id="connectPuterBtn" class="connect-btn" type="button">
+          <span class="connect-dot"></span>
+          <span id="connectText">Connect Puter</span>
+        </button>
+        <div id="connectStatus" class="connect-status">Not connected</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="workspace-grid">
+        <aside class="panel setup-panel">
+          <div class="panel-head">
+            <div>
+              <span class="step-badge">1</span>
+              <h2>Setup</h2>
+            </div>
+            <span id="sizeBadge" class="mini-badge">2000 × 2000</span>
+          </div>
+
+          <div class="field-group">
+            <label for="imageCount">How many images?</label>
+            <input id="imageCount" type="number" min="1" max="50" inputmode="numeric" placeholder="e.g. 5, 10, 30" autocomplete="off" />
+            <small>Enter the exact number of prompt boxes you need.</small>
+          </div>
+
+          <div class="field-group">
+            <label for="sizePreset">Size preset</label>
+            <select id="sizePreset"></select>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="widthInput">Width</label>
+              <input id="widthInput" type="number" min="64" max="4096" inputmode="numeric" placeholder="e.g. 2000" />
+            </div>
+            <div class="field-group">
+              <label for="heightInput">Height</label>
+              <input id="heightInput" type="number" min="64" max="4096" inputmode="numeric" placeholder="e.g. 2000" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label for="modelSelect">Model</label>
+              <select id="modelSelect">
+                <option value="gpt-image-2" selected>GPT Image 2 — Best</option>
+                <option value="gpt-image-1.5">GPT Image 1.5</option>
+                <option value="gpt-image-1">GPT Image 1</option>
+                <option value="gpt-image-1-mini">GPT Image 1 Mini</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="qualitySelect">Quality</label>
+              <select id="qualitySelect">
+                <option value="medium" selected>Medium — balanced</option>
+                <option value="high">High — premium</option>
+                <option value="low">Low — faster</option>
+                <option value="auto">Auto — GPT Image 2</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="formatSelect">Download format</label>
+            <select id="formatSelect">
+              <option value="image/png" selected>PNG</option>
+              <option value="image/jpeg">JPG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </div>
+
+          <div class="reference-box">
+            <div class="reference-head">
+              <div>
+                <h3>Optional reference images</h3>
+                <p>Upload a Canva template, product page, design, or mockup that should appear in the generated images.</p>
+              </div>
+              <span id="refCount" class="mini-badge">0 refs</span>
+            </div>
+
+            <label class="upload-zone" for="referenceInput">
+              <input id="referenceInput" type="file" accept="image/*" multiple />
+              <span class="upload-icon">＋</span>
+              <span>Upload reference image(s)</span>
+              <small>PNG, JPG, WebP. Data stays in your browser and is passed as image input during generation.</small>
+            </label>
+
+            <div id="referencePreview" class="reference-preview"></div>
+          </div>
+
+          <div class="check-list">
+            <label class="check-row">
+              <input id="useReferences" type="checkbox" checked />
+              <span>Use uploaded references in every image</span>
+            </label>
+            <label class="check-row">
+              <input id="autoEnhance" type="checkbox" checked />
+              <span>Auto-enhance prompts for realistic product photography</span>
+            </label>
+            <label class="check-row">
+              <input id="strictResize" type="checkbox" checked />
+              <span>Force exact selected size after generation</span>
+            </label>
+            <label class="check-row">
+              <input id="seoFilenames" type="checkbox" checked />
+              <span>SEO-friendly filenames from prompts</span>
+            </label>
+          </div>
+        </aside>
+
+        <section class="panel prompts-panel">
+          <div class="panel-head">
+            <div>
+              <span class="step-badge">2</span>
+              <h2>Prompts</h2>
+            </div>
+            <span id="promptCountBadge" class="mini-badge">0 prompts</span>
+          </div>
+
+          <p class="section-help">
+            Write one strong prompt per image. Keep product type clear, mention scene style, and avoid asking AI to create readable text unless you really need it.
+          </p>
+
+          <div id="promptList" class="prompt-list empty-state">
+            <div class="empty-card">
+              <strong>No prompt boxes yet.</strong>
+              <span>Enter image count in Setup. Prompt boxes will appear here automatically.</span>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="action-panel">
+        <button id="generateBtn" class="primary-action" type="button">Generate Images</button>
+        <button id="downloadZipBtn" class="secondary-action" type="button" disabled>Download ZIP</button>
+      </section>
+
+      <section class="progress-panel panel">
+        <div class="progress-top">
+          <strong id="progressTitle">Ready</strong>
+          <span id="progressMeta">0 / 0</span>
+        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        <pre id="logBox" class="log-box">Waiting for setup...</pre>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="panel-head">
+          <div>
+            <span class="step-badge">3</span>
+            <h2>Results</h2>
+          </div>
+          <span id="resultCount" class="mini-badge success">0 images</span>
+        </div>
+        <p class="section-help">Generated images appear here. Each output is resized to the exact selected dimensions before download.</p>
+        <div id="resultsGrid" class="results-grid empty-results">
+          <div class="empty-card">
+            <strong>No images yet.</strong>
+            <span>Add prompts and click Generate Images.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puter Image Test</title>
+  <style>
+    body { margin:0; min-height:100vh; display:grid; place-items:center; background:#070b12; color:#f8fafc; font-family:system-ui,sans-serif; }
+    .card { width:min(720px, calc(100% - 24px)); padding:28px; border-radius:24px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); }
+    button { min-height:52px; padding:0 18px; border:0; border-radius:14px; background:#f59e0b; color:#111827; font-weight:900; }
+    img { max-width:100%; margin-top:18px; border-radius:18px; background:#fff; }
+    pre { white-space:pre-wrap; color:#cbd5e1; background:rgba(0,0,0,.25); padding:12px; border-radius:12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Puter Image Test</h1>
+    <p>This page checks if Puter.js image generation is working on this domain.</p>
+    <button id="run">Run Test Image</button>
+    <pre id="log">Ready...</pre>
+    <div id="out"></div>
+  </div>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script>
+    const log = document.getElementById('log');
+    document.getElementById('run').onclick = async () => {
+      try {
+        log.textContent = 'Connecting / generating...';
+        if (puter.auth && puter.auth.signIn) await puter.auth.signIn();
+        const img = await puter.ai.txt2img('A clean realistic product photo of a printable planner page on a beige desk, natural light, no text', {
+          provider: 'openai-image-generation',
+          model: 'gpt-image-2',
+          quality: 'low',
+          ratio: { w: 1, h: 1 }
+        });
+        document.getElementById('out').innerHTML = '';
+        document.getElementById('out').appendChild(img);
+        log.textContent = 'Success. Puter image generation works here.';
+      } catch (e) {
+        log.textContent = 'Error: ' + (e.message || e);
+      }
+    };
+  </script>
+</body>
+</html>
